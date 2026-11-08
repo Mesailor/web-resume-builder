@@ -4,12 +4,9 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { User2 } from "lucide-react";
 import { NavUser } from "./nav-user";
+import { ModeToggle } from "./theme/mode-toggle";
 
 export function AppSidebar() {
   return (
@@ -19,7 +16,8 @@ export function AppSidebar() {
         <SidebarGroup />
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="items-end">
+        <ModeToggle />
         <NavUser
           user={{
             name: "John Doe",
