@@ -4,6 +4,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import { ModeToggle } from "./theme/mode-toggle";
@@ -11,7 +12,9 @@ import { ModeToggle } from "./theme/mode-toggle";
 export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader />
+      <SidebarHeader>
+        <SidebarTrigger className="self-end" />
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup />
         <SidebarGroup />
