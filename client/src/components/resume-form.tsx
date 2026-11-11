@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import * as z from "zod";
 import {
   Field,
   FieldDescription,
@@ -11,42 +10,32 @@ import {
   FieldSet,
 } from "./ui/field";
 import { Input } from "./ui/input";
+import {
+  DEFAULT_RESUME_VALUES,
+  resumeSchema,
+  type Resume,
+} from "@/types/resume";
+import { Button } from "./ui/button";
 
-const formSchema = z.object({
-  name: z.string().min(1, "Name must be at least 1 character."),
-  headline: z.string(),
-  location: z.string(),
-  email: z.string(),
-  phone: z.string(),
-  socialNetworks: z.object({
-    linkedin: z.url("LinkedIn must be a valid URL.").optional(),
-    github: z.url("LinkedIn must be a valid URL.").optional(),
-    telegram: z.url("LinkedIn must be a valid URL.").optional(),
-  }),
-});
+interface ResumeFormProps {
+  onSubmit: (data: Resume) => void;
+}
 
-export const ResumeForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      headline: "",
-      location: "",
-      email: "",
-      phone: "",
-      socialNetworks: {},
-    },
+export const ResumeForm = ({ onSubmit }: ResumeFormProps) => {
+  const form = useForm<Resume>({
+    resolver: zodResolver(resumeSchema),
+    defaultValues: DEFAULT_RESUME_VALUES,
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log(data);
+  function handleSubmit(data: Resume) {
+    console.log("Form submitted with data:", data);
+    onSubmit(data);
   }
 
   return (
     <form
       id="resume-form"
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={form.handleSubmit(handleSubmit)}
       className="space-y-2"
     >
       <FieldSet className="mt-6">
@@ -206,6 +195,9 @@ export const ResumeForm = () => {
           />
         </FieldGroup>
       </FieldSet>
+      <Button type="submit" className="mt-4">
+        Submit
+      </Button>
     </form>
   );
 };
