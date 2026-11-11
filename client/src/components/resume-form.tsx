@@ -19,12 +19,13 @@ import { Button } from "./ui/button";
 
 interface ResumeFormProps {
   onSubmit: (data: Resume) => void;
+  data: Resume | null;
 }
 
-export const ResumeForm = ({ onSubmit }: ResumeFormProps) => {
+export const ResumeForm = ({ onSubmit, data }: ResumeFormProps) => {
   const form = useForm<Resume>({
     resolver: zodResolver(resumeSchema),
-    defaultValues: DEFAULT_RESUME_VALUES,
+    defaultValues: data || DEFAULT_RESUME_VALUES,
   });
 
   function handleSubmit(data: Resume) {
@@ -38,7 +39,7 @@ export const ResumeForm = ({ onSubmit }: ResumeFormProps) => {
       onSubmit={form.handleSubmit(handleSubmit)}
       className="space-y-2"
     >
-      <FieldSet className="mt-6">
+      <FieldSet>
         <FieldLegend>General info</FieldLegend>
         <FieldDescription>Add your general information.</FieldDescription>
         <FieldGroup className="gap-2">
@@ -195,7 +196,7 @@ export const ResumeForm = ({ onSubmit }: ResumeFormProps) => {
           />
         </FieldGroup>
       </FieldSet>
-      <Button type="submit" className="mt-4">
+      <Button type="submit" size="lg" className="mt-4 w-full">
         Submit
       </Button>
     </form>
