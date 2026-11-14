@@ -159,11 +159,11 @@ export const ResumeForm = ({ onSubmit, data }: ResumeFormProps) => {
             )}
           />
           <Controller
-            name="socialNetworks.linkedin"
+            name="socialNetworks.github"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="resume-form-linkedin">GitHub</FieldLabel>
+                <FieldLabel htmlFor="resume-form-github">GitHub</FieldLabel>
                 <Input
                   {...field}
                   id="resume-form-github"
@@ -181,7 +181,7 @@ export const ResumeForm = ({ onSubmit, data }: ResumeFormProps) => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="resume-form-linkedin">Telegram</FieldLabel>
+                <FieldLabel htmlFor="resume-form-telegram">Telegram</FieldLabel>
                 <Input
                   {...field}
                   id="resume-form-telegram"
