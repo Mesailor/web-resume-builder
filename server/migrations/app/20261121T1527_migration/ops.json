@@ -1,0 +1,240 @@
+[
+  {
+    "id": "field.users.phone.unset",
+    "label": "Remove field phone from collection users",
+    "operationClass": "destructive",
+    "name": "field.users.phone.unset",
+    "precheck": [],
+    "run": [
+      {
+        "collection": "users",
+        "command": {
+          "kind": "rawUpdateMany",
+          "collection": "users",
+          "filter": {
+            "phone": {
+              "$exists": true
+            }
+          },
+          "update": {
+            "$unset": {
+              "phone": ""
+            }
+          },
+          "bypassDocumentValidation": true
+        },
+        "meta": {
+          "target": "mongo",
+          "storageHash": "",
+          "lane": "mongo-raw"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "no document in users holds phone",
+        "source": {
+          "collection": "users",
+          "command": {
+            "kind": "rawAggregate",
+            "collection": "users",
+            "pipeline": [
+              {
+                "$match": {
+                  "phone": {
+                    "$exists": true
+                  }
+                }
+              },
+              {
+                "$limit": 1
+              }
+            ]
+          },
+          "meta": {
+            "target": "mongo",
+            "storageHash": "",
+            "lane": "mongo-raw"
+          }
+        },
+        "filter": {
+          "kind": "exists",
+          "field": "_id",
+          "exists": true
+        },
+        "expect": "notExists"
+      }
+    ]
+  },
+  {
+    "id": "validator.users.update",
+    "label": "Update validator on users (removed: phone)",
+    "operationClass": "widening",
+    "precheck": [
+      {
+        "description": "collection users exists",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "users"
+        },
+        "expect": "exists",
+        "object": "collection \"users\""
+      },
+      {
+        "description": "every document in users fits the new validator",
+        "source": {
+          "collection": "users",
+          "command": {
+            "kind": "rawAggregate",
+            "collection": "users",
+            "pipeline": [
+              {
+                "$match": {
+                  "$nor": [
+                    {
+                      "$jsonSchema": {
+                        "additionalProperties": false,
+                        "bsonType": "object",
+                        "properties": {
+                          "_id": {
+                            "bsonType": "objectId"
+                          },
+                          "email": {
+                            "bsonType": "string"
+                          },
+                          "name": {
+                            "bsonType": [
+                              "null",
+                              "string"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "_id",
+                          "email"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "$limit": 1
+              }
+            ]
+          },
+          "meta": {
+            "target": "mongo",
+            "storageHash": "",
+            "lane": "mongo-raw"
+          }
+        },
+        "filter": {
+          "kind": "exists",
+          "field": "_id",
+          "exists": true
+        },
+        "expect": "notExists"
+      }
+    ],
+    "execute": [
+      {
+        "description": "modify users",
+        "command": {
+          "kind": "collMod",
+          "collection": "users",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "email": {
+                  "bsonType": "string"
+                },
+                "name": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                }
+              },
+              "required": [
+                "_id",
+                "email"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "validator applied on users",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "name",
+              "op": "$eq",
+              "value": "users"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationLevel",
+              "op": "$eq",
+              "value": "strict"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationAction",
+              "op": "$eq",
+              "value": "error"
+            },
+            {
+              "kind": "field",
+              "field": "options.validator.$jsonSchema",
+              "op": "$eq",
+              "value": {
+                "additionalProperties": false,
+                "bsonType": "object",
+                "properties": {
+                  "_id": {
+                    "bsonType": "objectId"
+                  },
+                  "email": {
+                    "bsonType": "string"
+                  },
+                  "name": {
+                    "bsonType": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                },
+                "required": [
+                  "_id",
+                  "email"
+                ]
+              }
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  }
+]

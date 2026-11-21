@@ -7,6 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/app.ts",
     "contract:emit": "prisma contract emit",
+    "migration:plan": "prisma migration plan",
+    "migration:apply": "prisma db migrate --advance-ref db",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

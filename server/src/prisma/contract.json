@@ -35,13 +35,6 @@
                   "codecId": "mongo/string@1",
                   "kind": "scalar"
                 }
-              },
-              "phone": {
-                "nullable": true,
-                "type": {
-                  "codecId": "mongo/string@1",
-                  "kind": "scalar"
-                }
               }
             },
             "relations": {},
@@ -56,9 +49,6 @@
                 },
                 "name": {
                   "field": "name"
-                },
-                "phone": {
-                  "field": "phone"
                 }
               }
             }
@@ -103,12 +93,6 @@
                         "null",
                         "string"
                       ]
-                    },
-                    "phone": {
-                      "bsonType": [
-                        "null",
-                        "string"
-                      ]
                     }
                   },
                   "required": [
@@ -127,7 +111,7 @@
         "kind": "mongo-database"
       }
     },
-    "storageHash": "a7d00abb0f8fc9c9f5ace78b306278673e60cc5774ec1833cd0cfd334beead54"
+    "storageHash": "a54d34d81005b6a1c0fbf0b40d1b349f7497e2f9b9f8f144bf392979a891c1c8"
   },
   "capabilities": {},
   "extensions": {},

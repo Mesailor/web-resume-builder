@@ -22,7 +22,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'a7d00abb0f8fc9c9f5ace78b306278673e60cc5774ec1833cd0cfd334beead54'>;
+  StorageHashBase<'a54d34d81005b6a1c0fbf0b40d1b349f7497e2f9b9f8f144bf392979a891c1c8'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
@@ -54,7 +54,6 @@ export namespace Models {
     email: FieldOutputTypes['__unbound__']['User']['email'];
     id: FieldOutputTypes['__unbound__']['User']['id'];
     name: FieldOutputTypes['__unbound__']['User']['name'];
-    phone: FieldOutputTypes['__unbound__']['User']['phone'];
     readonly [RelationKeys]?: never;
   };
 }
@@ -93,7 +92,6 @@ type ContractBase = Omit<
                     readonly _id: { readonly bsonType: 'objectId' };
                     readonly email: { readonly bsonType: 'string' };
                     readonly name: { readonly bsonType: readonly ['null', 'string'] };
-                    readonly phone: { readonly bsonType: readonly ['null', 'string'] };
                   };
                   readonly required: readonly ['_id', 'email'];
                 };
@@ -133,10 +131,6 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
-              readonly phone: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
-              };
             };
             readonly relations: Record<string, never>;
             readonly storage: {
@@ -145,7 +139,6 @@ type ContractBase = Omit<
                 readonly email: { readonly field: 'email' };
                 readonly id: { readonly field: '_id' };
                 readonly name: { readonly field: 'name' };
-                readonly phone: { readonly field: 'phone' };
               };
             };
           };
