@@ -1,7 +1,14 @@
 import express from "express";
+import * as z from "zod";
+import { MongoServerError } from "mongodb";
 import { db } from "../prisma/db.ts";
 import { isValidObjectId } from "../utils/index.ts";
-import { BadRequestError, NotFoundError } from "../utils/http-error.ts";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+} from "../utils/http-error.ts";
+import { UserCreateSchema, UserUpdateSchema } from "../schemas/users.ts";
 
 const router = express.Router();
 
@@ -20,22 +27,47 @@ router.get("/:userId", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { name, email } = req.body;
-  const newUser = await db.orm.users.create({ name, email });
-  res.send(newUser);
+  const parsed = UserCreateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    throw new BadRequestError(z.prettifyError(parsed.error));
+  }
+
+  try {
+    const newUser = await db.orm.users.create(parsed.data);
+    res.send(newUser);
+  } catch (err) {
+    if (err instanceof MongoServerError && err.code === 11000) {
+      throw new ConflictError("User already exists");
+    }
+    throw err;
+  }
 });
 
-router.put("/:userId", async (req, res) => {
+router.patch("/:userId", async (req, res) => {
   const isValidId = isValidObjectId(req.params.userId);
   if (!isValidId) {
     throw new BadRequestError("Invalid user ID");
   }
 
-  const { name, email } = req.body;
-  const updatedUser = await db.orm.users
-    .where({ id: req.params.userId })
-    .update({ name, email });
-  res.send(updatedUser);
+  const parsed = UserUpdateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    throw new BadRequestError(z.prettifyError(parsed.error));
+  }
+
+  try {
+    const updatedUser = await db.orm.users
+      .where({ id: req.params.userId })
+      .update(parsed.data);
+    if (!updatedUser) {
+      throw new NotFoundError("User not found");
+    }
+    res.send(updatedUser);
+  } catch (err) {
+    if (err instanceof MongoServerError && err.code === 11000) {
+      throw new ConflictError("User already exists");
+    }
+    throw err;
+  }
 });
 
 router.delete("/:userId", async (req, res) => {
@@ -44,7 +76,13 @@ router.delete("/:userId", async (req, res) => {
     throw new BadRequestError("Invalid user ID");
   }
 
-  await db.orm.users.where({ id: req.params.userId }).delete();
+  const deletedUser = await db.orm.users
+    .where({ id: req.params.userId })
+    .delete();
+  if (!deletedUser) {
+    throw new NotFoundError("User not found");
+  }
+
   res.send({ message: "User deleted successfully", id: req.params.userId });
 });
 

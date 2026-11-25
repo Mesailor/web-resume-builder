@@ -19,6 +19,12 @@ export class NotFoundError extends HttpError {
   }
 }
 
+export class ConflictError extends HttpError {
+  constructor(message: string = "Conflict") {
+    super(409, message);
+  }
+}
+
 export class InternalServerError extends HttpError {
   constructor(message: string = "Internal server error") {
     super(500, message);
